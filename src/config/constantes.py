@@ -32,7 +32,7 @@ TIPOS_SEGURO = {
 }
 
 # Estado de Cita
-ESTADO_CITA = ["Agendada", "Completada", "Cancelada"]
+ESTADOS_CITA = ["Agendada", "Completada", "Cancelada"]
 
 # Categorias de Medicamentos 
 CATEGORIAS_MEDICAMENTO = [
@@ -47,10 +47,10 @@ CATEGORIAS_MEDICAMENTO = [
 ESTADOS_FACTURA = ["Pendiente", "Pagada", "Cancelada"]
 
 # Metodos de Pago
-METODOS_PAGO = ["Efectivo", "Tarjeta de credito ", "Tarjeta de Debito", "Transferencia Bancaria"]
+METODOS_PAGO = ["Efectivo", "Tarjeta de credito", "Tarjeta de Debito", "Transferencia Bancaria"]
 
 # Tipos de Movimiento Inventario
-TIPOS_MOVIMIENTO = ["Estrada", "Salida"]
+TIPOS_MOVIMIENTO = ["Entrada", "Salida"]
 
 # Costos de Consulta por Especialidad
 COSTOS_CONSULTA = {
