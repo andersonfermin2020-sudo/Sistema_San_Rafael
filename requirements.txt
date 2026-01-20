@@ -1,0 +1,4 @@
+# Este proyecto solo usa librerías estándar de Python
+# No requiere instalación de paquetes externos
+
+# Python >= 3.8
