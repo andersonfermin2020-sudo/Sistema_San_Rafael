@@ -17,7 +17,7 @@ class Helpers:
     @staticmethod
     def pausar():
         """Pausa la ejecucion esperando un Enter"""
-        input("\\nPresion Enter para continuar...")
+        input("\nPresion Enter para continuar...")
     
     @staticmethod
     def formatear_fecha(fecha: date, formato="%d/%m/%Y") -> str:
@@ -105,7 +105,7 @@ class Helpers:
             return "No hay datos para mostrar"
         
         if titulos is None:
-            titulos == columnas
+            titulos = columnas
             
         anchos = []
         for i, col in enumerate(columnas):
