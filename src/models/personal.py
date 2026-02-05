@@ -12,31 +12,7 @@ from config.constantes import TURNOS, MOTIVOS_BAJA, ROLES_PERSONAL, ESPECIALIDAD
 from utils.validaciones import Validaciones
 
 class Personal(Persona):
-    """
-    Constructor de la clase Personal
-        
-    Args:
-        Propios:
-            id_personal (int): ID de la persona, auto-incremental, unico
-            rol (str): Rol de la persona, ej: Doctor, enfermera
-            especialidad (str | None): Solo para doctores 
-            departamentos (List[int]): Lista de IDs de departamentos asignados
-            jornada (str): Jornada de trabajo
-            turno (str | None): Turno de trabajo si jornada es por turnos
-            salario_base (float): Salario base de la persona
-            estado (str): Estado de trabajo de la persona, ej: Activo o Inactivo
-            fecha_contratacion (date): Fecha de contratacion de la persona
-            fecha_baja (date | None): Fecha de baja                motivo_baja (str | None): Motivo de la baja, ej: Renuncia, Despido, Fin de contrato
-            
-        Heredados de Persona (Super()):
-            dni (str): DNI de la persona (8 digitos)
-            nombre (str): Nombre completo de la persona de la persona
-            fecha_nacimiento (date): Fecha de nacimiento 
-            telefono (str): Telefono (9 digitos)
-            
-    Raises:
-        ValidationException: Formato o estado de los datos incorrectos
-    """
+
     def __init__(
             self, 
             dni: str, 
@@ -55,6 +31,33 @@ class Personal(Persona):
             fecha_baja: date | None,
             motivo_baja: str | None
     ):
+
+        """
+        Constructor de la clase Personal
+            
+        Args:
+            Propios:
+                id_personal (int): ID de la persona, auto-incremental, unico
+                rol (str): Rol de la persona, ej: Doctor, enfermera
+                especialidad (str | None): Solo para doctores 
+                departamentos (List[int]): Lista de IDs de departamentos asignados
+                jornada (str): Jornada de trabajo
+                turno (str | None): Turno de trabajo si jornada es por turnos
+                salario_base (float): Salario base de la persona
+                estado (str): Estado de trabajo de la persona, ej: Activo o Inactivo
+                fecha_contratacion (date): Fecha de contratacion de la persona
+                fecha_baja (date | None): Fecha de baja                motivo_baja (str | None): Motivo de la baja, ej: Renuncia, Despido, Fin de contrato
+                
+            Heredados de Persona (Super()):
+                dni (str): DNI de la persona (8 digitos)
+                nombre (str): Nombre completo de la persona de la persona
+                fecha_nacimiento (date): Fecha de nacimiento 
+                telefono (str): Telefono (9 digitos)
+                
+        Raises:
+            ValidationException: Formato o estado de los datos incorrectos
+        """
+
         super().__init__(dni, nombre, fecha_nacimiento, telefono)
 
         # Validaciones antes de asignar valores:

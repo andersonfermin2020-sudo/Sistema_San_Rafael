@@ -12,6 +12,9 @@ ESPECIALIDADES = ["Medicina General", "Pediatria", "Cardiologia"]
 # Tipos de Contrato
 TIPOS_CONTRATOS = ["Temporal", "Indefinido", "Por honorarios"]
 
+# Estados de Contrato
+ESTADOS_CONTRATO = ["Activo", "Vencido", "Finalizado"]
+
 # Jornadas Laborales
 JORNADAS = ["Medio tiempo", "Tiempo completo", "Por turnos"]
 
