@@ -100,7 +100,7 @@ class Persistencia:
         # Llamamos al metodo de guardar todo y retornamos su resultado
         return self.guardar_todos(datos)
 
-    def buscar_por_id(self, id_valor: int, campo_id: str = None) -> Optional[Dict]:
+    def buscar_por_id(self, id_valor: int, campo_id: str | None = None) -> Optional[Dict]:
         """
         Busca un registro por su ID
         
@@ -153,7 +153,7 @@ class Persistencia:
         # Se retorna los registros encontrados o una lista vacia
         return resutados
 
-    def actualizar(self, id_valor: int, campos_actualizar: Dict, campo_id: str = None) -> bool:
+    def actualizar(self, id_valor: int, campos_actualizar: Dict, campo_id: str | None = None) -> bool:
         """
         Actualiza campos de un registro
         
@@ -182,7 +182,7 @@ class Persistencia:
         # Si no se encontro se retorna False
         return False
 
-    def eliminar(self, id_valor: int, campo_id: str = None) -> bool:
+    def eliminar(self, id_valor: int, campo_id: str | None = None) -> bool:
         """
         Elimina un registro (NO usar en Personal/Pacientes)
         
@@ -211,7 +211,7 @@ class Persistencia:
             return self.guardar_todos(datos_obtenidos)
         return False
 
-    def generar_id_autoincremental(self, campo_id: str = None) -> int:
+    def generar_id_autoincremental(self, campo_id: str | None = None) -> int:
         """
         Genera un ID único auto-incremental
         

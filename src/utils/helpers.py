@@ -87,7 +87,7 @@ class Helpers:
     
     @staticmethod
     def formatear_tabla(datos:List[Dict], columnas: List[str],
-                        titulos: List[str] = None) -> str:
+                        titulos: List[str] | None = None) -> str:
         
         """
         Formatear una lista de diccionarios como tabla ASCII

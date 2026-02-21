@@ -177,18 +177,17 @@ class Contrato:
         
         """
 
-        # Contrato no es temporal (fecha fin es None)
-        if self._tipo != "Temporal":
-            return
+        # Contrato no es temporal
+        if self._tipo != "Temporal" or self._fecha_fin is None:
+            return None
         
         # El contrato aun no vence
         if date.today() < self._fecha_fin:
-            return
+            return None
         
-        # Cambiar estado 
-        if date.today() > self._fecha_fin:
-            self._estado = "Vencido"
-            print(f"Contrato {self._id_contrato} ha sido marcado como Vencido.")
+        # Cambiar estado (cubre == y >)
+        self._estado = "Vencido"
+        print(f"Contrato {self._id_contrato} ha sido marcado como Vencido.")
 
     def finalizar(self) -> None:
         """

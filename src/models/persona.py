@@ -31,8 +31,8 @@ class Persona(ABC):
 
         self.nombre = nombre
         
-        if not Validaciones.validar_fecha(fecha_nacimiento):
-            raise ValueError(f"Fecha invalida: {fecha_nacimiento}. No cumple con el formato correcto")
+        if not isinstance(fecha_nacimiento, date):
+            raise ValueError(f"Fecha invalida: {fecha_nacimiento}. Debe ser un objeto de tipo date")
 
         if Validaciones.fecha_futura(fecha_nacimiento):
             raise ValueError(f"Fecha invalida: {fecha_nacimiento}. La fecha de nacimiento no puede ser una fecha futura.")
