@@ -104,11 +104,11 @@ class PersonalController:
 
         # Atrapa cualquier error al crear la instancia
         except ValidationException as e:
-            return {"exito": False, "mensaje": f"Datos inválidos: {str(e)}"}
+            return {"exito": False, "mensaje": f"Datos inválidos: {str(e)}", "id": None}
         
         # Atrapa errores inesperados   
         except Exception as e:
-            return {"exito": False, "mensaje": f"Error interno del sistema: {str(e)}"}
+            return {"exito": False, "mensaje": f"Error interno del sistema: {str(e)}", "id": None}
 
     def buscar_por_dni(self, dni: str) -> dict:
         """
