@@ -46,7 +46,8 @@ class Personal(Persona):
                 salario_base (float): Salario base de la persona
                 estado (str): Estado de trabajo de la persona, ej: Activo o Inactivo
                 fecha_contratacion (date): Fecha de contratacion de la persona
-                fecha_baja (date | None): Fecha de baja                motivo_baja (str | None): Motivo de la baja, ej: Renuncia, Despido, Fin de contrato
+                fecha_baja (date | None): Fecha de baja                
+                motivo_baja (str | None): Motivo de la baja, ej: Renuncia, Despido, Fin de contrato
                 
             Heredados de Persona (Super()):
                 dni (str): DNI de la persona (8 digitos)
@@ -183,6 +184,26 @@ class Personal(Persona):
     @property
     def estado(self) -> str:
         return self._estado
+
+    @property
+    def jornada(self) -> str:
+            return self._jornada
+
+    @property
+    def turno(self) -> str | None:
+        return self._turno
+
+    @property
+    def salario_base(self) -> float:
+        return self._salario_base
+    
+    @property
+    def fecha_baja(self) -> date | None:
+        return self._fecha_baja
+
+    @property
+    def motivo_baja(self) -> str | None:
+        return self._motivo_baja
     
     # Metodos 
     def asignar_departamento(self, id_departamento: int) -> None:
