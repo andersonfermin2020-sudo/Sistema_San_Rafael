@@ -4,12 +4,12 @@ Hereda de Persona
 
 """
 
-from models.persona import Persona
+from src.models.persona import Persona
 from datetime import date
 from typing import List, Dict, Any
-from utils.excepciones import EstadoInvalidoException, ValidationException
-from config.constantes import TURNOS, MOTIVOS_BAJA, ROLES_PERSONAL, ESPECIALIDADES, JORNADAS, SALARIOS_BASE, ESTADOS_PERSONAL
-from utils.validaciones import Validaciones
+from src.utils.excepciones import EstadoInvalidoException, ValidationException
+from src.config.constantes import TURNOS, MOTIVOS_BAJA, ROLES_PERSONAL, ESPECIALIDADES, JORNADAS, SALARIOS_BASE, ESTADOS_PERSONAL
+from src.utils.validaciones import Validaciones
 
 class Personal(Persona):
 

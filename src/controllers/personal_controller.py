@@ -4,13 +4,13 @@ Controlador responsable de la gestion del personal medico y administrativo
 """
 from datetime import date
 from typing import List
-from utils.persistencia import Persistencia
-from utils.excepciones import ValidationException, EstadoInvalidoException
-from utils.validaciones import Validaciones
-from models.personal import Personal
-from models.contrato import Contrato
-from utils.helpers import Helpers
-from config.constantes import ESPECIALIDADES, TURNOS, JORNADAS
+from src.utils.persistencia import Persistencia
+from src.utils.excepciones import ValidationException, EstadoInvalidoException
+from src.utils.validaciones import Validaciones
+from src.models.personal import Personal
+from src.models.contrato import Contrato
+from src.utils.helpers import Helpers
+from src.config.constantes import ESPECIALIDADES, TURNOS, JORNADAS
 
 class PersonalController:
     """
@@ -404,7 +404,7 @@ class PersonalController:
 
             if not personal_encontrado:
                 return {
-                    "exito": True, 
+                    "exito": False, 
                     "mensaje": f"No se encontró personal en el departamento {id_departamento}.", 
                     "datos": []
                 }

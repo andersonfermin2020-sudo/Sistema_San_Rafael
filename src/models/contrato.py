@@ -3,7 +3,7 @@ Representa un contrato laboral de un miembro del personal
 
 """
 from datetime import date, timedelta
-from utils.excepciones import ValidationException, EstadoInvalidoException
+from src.utils.excepciones import ValidationException, EstadoInvalidoException
 from src.config.constantes import TIPOS_CONTRATOS, ESTADOS_CONTRATO, SALARIOS_BASE
 from typing import Dict, Any
 

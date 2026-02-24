@@ -5,8 +5,8 @@ Sirve para la herencia de las clases Personal y Pacientes
 """
 from abc import ABC, abstractmethod
 from datetime import date
-from utils.validaciones import Validaciones
-from utils.helpers import Helpers
+from src.utils.validaciones import Validaciones
+from src.utils.helpers import Helpers
 
 class Persona(ABC):
     
@@ -67,7 +67,7 @@ class Persona(ABC):
     @telefono.setter
     def telefono(self, telefono_nuevo: str) -> None:
         if not Validaciones.validar_telefono(telefono_nuevo):
-            raise ValueError(f"Telefono invalido: {telefono_nuevo}. Debe de tener 9 digitos")
+            raise ValueError(f"Telefono invalido: {telefono_nuevo}. Debe de tener 9 digitos y empezar con 9")
         self._telefono = telefono_nuevo
             
     # Metodos

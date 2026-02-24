@@ -9,6 +9,20 @@ ROLES_PERSONAL = ["Doctor", "Enfermera", "Administrativo"]
 # Especialidades Medicas
 ESPECIALIDADES = ["Medicina General", "Pediatria", "Cardiologia"]
 
+# Departamentos
+DEPARTAMENTOS = {
+    1: {"nombre": "Emergencia", "descripcion": "Atención de urgencias y emergencias médicas"},
+    2: {"nombre": "Pediatría", "descripcion": "Atención médica para niños y adolescentes"},
+    3: {"nombre": "Cardiología", "descripcion": "Diagnóstico y tratamiento de enfermedades del corazón"},
+    4: {"nombre": "Traumatología", "descripcion": "Tratamiento de lesiones del sistema musculoesquelético"},
+    5: {"nombre": "Ginecología", "descripcion": "Atención de la salud femenina y reproductiva"},
+    6: {"nombre": "Medicina General", "descripcion": "Consultas médicas generales"},
+    7: {"nombre": "Farmacia", "descripcion": "Dispensación y control de medicamentos"},
+    8: {"nombre": "Laboratorio", "descripcion": "Análisis clínicos y diagnósticos"},
+    9: {"nombre": "Radiología", "descripcion": "Estudios de imagen y diagnóstico por imagen"},
+    10: {"nombre": "Administración", "descripcion": "Gestión administrativa del hospital"}
+}
+
 # Tipos de Contrato
 TIPOS_CONTRATOS = ["Temporal", "Indefinido", "Por honorarios"]
 
