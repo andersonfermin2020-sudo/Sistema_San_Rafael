@@ -221,4 +221,4 @@ class Paciente(Persona):
         except KeyError as e:
             raise ValueError(f"Falta el campo requerido: {e}")
         except Exception as e:
-            raise ValueError(f"Error al deserializar Personal: {e}") 
+            raise ValueError(f"Error al deserializar Paciente: {e}") 
