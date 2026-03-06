@@ -14,7 +14,8 @@ class Cita:
         fecha: date,
         hora: time,
         especialidad: str,
-        motivo: str
+        motivo: str,
+        validar_fecha_futura: bool = True
         ) -> None:
         
         """
@@ -55,8 +56,16 @@ class Cita:
         if not isinstance(hora, time):
             raise ValidationException("Formato de hora invalido. Debe ser de tipo hora/time")
         
-        if not (time(7, 0) <= hora <= time(22, 0)):
+        if not (time(7, 0) <= hora < time(22, 0)):
             raise ValidationException("Hora invalida. Debe de ser entre 7:00AM y 10:00PM")
+
+        # Validar que no sea pasada
+        if validar_fecha_futura:
+            momento_cita = datetime.combine(fecha, hora)
+            if momento_cita < datetime.now():
+                raise ValidationException(
+                    "La fecha y hora de la cita no pueden ser en el pasado"
+                )
         
         # Especialidad
         if not especialidad or not isinstance(especialidad, str):
@@ -69,6 +78,7 @@ class Cita:
         # Motivo
         if not motivo or not isinstance(motivo, str):
             raise ValidationException("Formato de motivo invalido. Debe ser texto y no puede estar vacio")
+        motivo = motivo.strip().capitalize()
         
         # ========== ASIGNACION ==========
         self._id_cita = id_cita
@@ -109,7 +119,7 @@ class Cita:
     
     @property
     def historial_cambios(self) -> List[dict]:
-        return self._historial_cambios
+        return self._historial_cambios.copy()
     
     # ========== METODOS =========
     def reprogramar(self, nueva_fecha: date, nueva_hora: time, usuario: int) -> None:
@@ -127,6 +137,9 @@ class Cita:
         """
         
         # Validaciones
+        if not isinstance(usuario, int) or usuario <= 0:
+            raise ValidationException("ID de usuario debe ser entero positivo")
+        
         if self.estado != "Agendada":
             raise EstadoInvalidoException(f"No se puede reprogramar esta cita. El estado actual de la cita es '{self.estado}'")
         
@@ -140,7 +153,7 @@ class Cita:
         if momento_nuevo < datetime.now():
             raise ValidationException("La nueva fecha y hora no pueden ser en el pasado")
         
-        if not (time(7, 0) <= nueva_hora <= time(22, 0)):
+        if not (time(7, 0) <= nueva_hora < time(22, 0)):
             raise ValidationException("Hora invalida. Debe de ser entre 7:00AM y 10:00PM")
         
         if nueva_fecha == self.fecha and nueva_hora == self.hora:
@@ -256,7 +269,8 @@ class Cita:
                 fecha=date.fromisoformat(data["fecha"]),
                 hora=time.fromisoformat(data["hora"]),
                 especialidad=data["especialidad"],
-                motivo=data["motivo"]
+                motivo=data["motivo"],
+                validar_fecha_futura=False
             )
             
             cita._estado = data["estado"]
