@@ -417,6 +417,57 @@ class PersonalController:
         except Exception as e:
             return {"exito": False, "mensaje": f"Error al acceder a los datos: {str(e)}", "datos": []}
 
+    def obtener_doctores_por_especialidad(self, especialidad: str) -> dict:
+        """
+        Busca personal que sea Doctor, esté Activo y pertenezca a una especialidad.
+        
+        Args:
+            especialidad (str): La especialidad a filtrar (Medicina General, etc.)
+            
+        Returns:
+            dict: {"exito": bool, "mensaje": str, "datos": List[Personal]}
+        """
+        especialidad_buscada = especialidad.strip().title()
+
+        try:
+            todos_los_registros = self.persistencia.leer_todos()
+            doctores_encontrados = []
+
+            for data in todos_los_registros:
+                # Aplicar Triple Filtro: Rol + Estado + Especialidad
+                es_doctor = data.get("rol") == "Doctor"
+                esta_activo = data.get("estado") == "Activo"
+                es_especialidad = data.get("especialidad") == especialidad_buscada
+
+                if es_doctor and esta_activo and es_especialidad:
+                    try:
+                        # Convertimos a instancia de objeto Personal
+                        doctor_obj = Personal.from_dict(data)
+                        doctores_encontrados.append(doctor_obj)
+                    except Exception:
+                        continue
+
+            # Manejo de resultados vacíos
+            if not doctores_encontrados:
+                return {
+                    "exito": False,
+                    "mensaje": f"No hay doctores activos disponibles en {especialidad_buscada}.",
+                    "datos": []
+                }
+
+            # Éxito
+            return {
+                "exito": True,
+                "mensaje": f"Se encontraron {len(doctores_encontrados)} doctores disponibles.",
+                "datos": doctores_encontrados
+            }
+
+        except Exception as e:
+            return {
+                "exito": False, 
+                "mensaje": f"Error al consultar personal: {str(e)}", 
+                "datos": []
+            }
 
     # ===== METODOS PRIVADOS =====
 

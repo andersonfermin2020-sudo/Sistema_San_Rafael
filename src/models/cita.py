@@ -112,6 +112,10 @@ class Cita:
     @property 
     def hora(self) -> time:
         return self._hora
+
+    @property
+    def motivo(self) -> str:
+        return self._motivo
     
     @property
     def estado(self) -> str:

@@ -275,6 +275,51 @@ class CitaController:
         # Exito
         return {"exito": True, "mensaje": "Cita cancelada exitosamente", "id": obj_cita.id_cita}
 
+    def buscar_por_id(self, id_cita: int) -> dict:
+        """
+        Busca una cita específica por su ID
+        
+        Args:
+            id_cita (int): ID de la cita a buscar
+            
+        Returns:
+            dict: {"exito": bool, "mensaje": str, "datos": Cita | None}
+        """
+        
+        # Validar ID
+        if not isinstance(id_cita, int) or id_cita <= 0:
+            return {
+                "exito": False, 
+                "mensaje": "Formato de ID de cita inválido. Debe ser un número entero positivo.", 
+                "datos": None
+            }
+
+        # Buscar cita
+        try:
+            cita_encontrada = self.persistencia.buscar_por_id(id_cita)
+            
+            if cita_encontrada is None:
+                return {
+                    "exito": False, 
+                    "mensaje": f"No se encontró ninguna cita registrada con el ID {id_cita}", 
+                    "datos": None
+                }
+            
+            obj_cita = Cita.from_dict(cita_encontrada)
+            
+            return {
+                "exito": True, 
+                "mensaje": "Cita localizada con éxito", 
+                "datos": obj_cita
+            }
+
+        except (KeyError, Exception) as e:
+            return {
+                "exito": False, 
+                "mensaje": f"Error al recuperar la cita: {str(e)}", 
+                "datos": None
+            }
+
     def listar_citas_dia(self, fecha: date) -> dict:
         """
         Lista todas las citas de un dia especifico
@@ -390,6 +435,56 @@ class CitaController:
         # Exito
         return {"exito": True, "mensaje": "Consultas encontradas de manera exitosa", "datos": datos}
 
+    def listar_citas_pendientes_paciente(self, id_paciente: int) -> dict:  
+        """
+        Busca todas las citas con estado 'Agendada' de un paciente específico
+        
+        Args:
+            id_paciente (int): ID del paciente a consultar
+            
+        Returns:
+            dict: {"exito": bool, "mensaje": str, "datos": list[Cita]}
+        """
+        
+        # Validar ID
+        if not isinstance(id_paciente, int) or id_paciente <= 0:
+            return {"exito": False, "mensaje": "ID de paciente inválido", "datos": []}
+
+        try:
+            # Buscar en persistencia por ID de paciente y estado
+            citas_data = self.persistencia.buscar({
+                "id_paciente": id_paciente,
+                "estado": "Agendada"
+            })
+
+            if not citas_data:
+                return {
+                    "exito": False, 
+                    "mensaje": "El paciente no tiene citas pendientes de atención", 
+                    "datos": []
+                }
+
+            # Convertir diccionarios a instancias de Cita
+            lista_instancias = []
+            for item in citas_data:
+                try:
+                    lista_instancias.append(Cita.from_dict(item))
+                except Exception as e:
+                    print(f"Error al procesar cita ID {item.get('id_cita')}: {e}")
+                    continue
+
+            # 4. Ordenar por fecha y hora
+            lista_instancias.sort(key=lambda x: (x.fecha, x.hora))
+
+            return {
+                "exito": True,
+                "mensaje": f"Se encontraron {len(lista_instancias)} citas pendientes",
+                "datos": lista_instancias
+            }
+
+        except Exception as e:
+            return {"exito": False, "mensaje": f"Error al buscar citas: {str(e)}", "datos": []}
+    
     # ========== METODOS PRIVADOS ==========
     def _doctor_disponible(self, id_doctor: int, fecha: date, hora: time) -> bool:
         """
