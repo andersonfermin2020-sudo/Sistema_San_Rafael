@@ -143,6 +143,54 @@ class PersonalController:
         except Exception as e:
             return {"exito": False, "mensaje": f"Error: {str(e)}", "datos": None}
 
+    def obtener_doctor_activo_por_id(self, id_personal: int) -> dict:
+        """
+        Busca un empleado por ID y valida que tenga rol de Doctor y estado Activo
+        
+        Returns:
+            dict: {"exito": bool, "mensaje": str, "datos": Personal | None}
+        """
+        # Validar ID
+        if not isinstance(id_personal, int) or id_personal <= 0:
+            return {"exito": False, "mensaje": "ID de personal inválido.", "datos": None}
+
+        try:
+            # Buscar datos en Persistencia
+            data = self.persistencia.buscar_por_id(id_personal)
+            
+            if not data:
+                return {"exito": False, "mensaje": f"No existe personal con el ID {id_personal}.", "datos": None}
+
+            # Conversion
+            empleado = Personal.from_dict(data)
+
+            # Validar que sea doctor
+            if empleado.rol != "Doctor":
+                return {
+                    "exito": False, 
+                    "mensaje": f"Acceso denegado: El empleado con ID {id_personal} tiene rol de {empleado.rol}.", 
+                    "datos": None
+                }
+
+            # Validar que este activo
+            if empleado.estado != "Activo":
+                return {
+                    "exito": False, 
+                    "mensaje": f"Operación inválida: El Doctor se encuentra en estado '{empleado.estado}'.", 
+                    "datos": None
+                }
+
+            # Exito
+            return {
+                "exito": True,
+                "mensaje": "Doctor validado exitosamente.",
+                "datos": empleado
+            }
+
+        # Captura de errores de estructura o lectura
+        except Exception as e:
+            return {"exito": False, "mensaje": f"Error en validación de personal: {str(e)}", "datos": None}
+
     def modificar_personal(self, id_personal: int, campo_modificar: dict) -> dict:
         """
         Modifica datos de un personal registrado
