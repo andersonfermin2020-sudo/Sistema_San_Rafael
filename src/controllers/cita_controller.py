@@ -275,6 +275,51 @@ class CitaController:
         # Exito
         return {"exito": True, "mensaje": "Cita cancelada exitosamente", "id": obj_cita.id_cita}
 
+    def buscar_por_id(self, id_cita: int) -> dict:
+        """
+        Busca una cita específica por su ID
+        
+        Args:
+            id_cita (int): ID de la cita a buscar
+            
+        Returns:
+            dict: {"exito": bool, "mensaje": str, "datos": Cita | None}
+        """
+        
+        # Validar ID
+        if not isinstance(id_cita, int) or id_cita <= 0:
+            return {
+                "exito": False, 
+                "mensaje": "Formato de ID de cita inválido. Debe ser un número entero positivo.", 
+                "datos": None
+            }
+
+        # Buscar cita
+        try:
+            cita_encontrada = self.persistencia.buscar_por_id(id_cita)
+            
+            if cita_encontrada is None:
+                return {
+                    "exito": False, 
+                    "mensaje": f"No se encontró ninguna cita registrada con el ID {id_cita}", 
+                    "datos": None
+                }
+            
+            obj_cita = Cita.from_dict(cita_encontrada)
+            
+            return {
+                "exito": True, 
+                "mensaje": "Cita localizada con éxito", 
+                "datos": obj_cita
+            }
+
+        except (KeyError, Exception) as e:
+            return {
+                "exito": False, 
+                "mensaje": f"Error al recuperar la cita: {str(e)}", 
+                "datos": None
+            }
+
     def listar_citas_dia(self, fecha: date) -> dict:
         """
         Lista todas las citas de un dia especifico
@@ -390,6 +435,186 @@ class CitaController:
         # Exito
         return {"exito": True, "mensaje": "Consultas encontradas de manera exitosa", "datos": datos}
 
+    def listar_agenda_actual_doctor(self, id_doctor: int, estado) -> dict:
+        """
+        Lista las citas de un doctor para el día de hoy filtradas por estado
+        
+        Args:
+            id_doctor (int): ID del doctor
+            estado (str): Estado a filtrar 
+        
+        Returns:
+            dict: {"exito": bool, "mensaje": str, "datos": list}
+        """
+        # Validar ID
+        if not isinstance(id_doctor, int) or id_doctor <= 0:
+            return {"exito": False, "mensaje": "ID de doctor inválido", "datos": []}
+        
+        # Validar estado
+        estado = estado.strip().capitalize()
+        if estado not in ESTADOS_CITA:
+            return {"exito": False, "mensaje": f"Estado '{estado}' no reconocido", "datos": []}
+
+        # Definir fecha actual
+        fecha_hoy = date.today()
+
+        try:
+            # Buscar en Persistencia
+            doctor_encontrado = self.persistencia_personal.buscar_por_id(id_doctor)
+            if not doctor_encontrado:
+                return {"exito": False, "mensaje": f"No se encontró al doctor con ID {id_doctor}", "datos": []}
+            
+            # Busqueda con triple filtro
+            citas_data = self.persistencia.buscar({
+                "id_doctor": id_doctor,
+                "estado": estado,
+                "fecha": fecha_hoy.isoformat()
+            })
+
+            if not citas_data:
+                return {
+                    "exito": False, 
+                    "mensaje": f"No hay citas {estado.lower()}s para el Dr. {doctor_encontrado['nombre']} el día de hoy.", 
+                    "datos": []
+                }
+
+            # Conversion
+            instancias_citas = []
+            for data in citas_data:
+                try:
+                    obj_cita = Cita.from_dict(data)
+                    instancias_citas.append(obj_cita)
+                except Exception:
+                    continue # Ignorar registros corruptos
+
+            # Ordenar por hora
+            instancias_citas.sort(key=lambda x: x.hora)
+
+            return {
+                "exito": True,
+                "mensaje": f"Agenda de hoy para el Dr. {doctor_encontrado['nombre']} recuperada.",
+                "datos": instancias_citas
+            }
+
+        # Captura de errores de estructura o lectura
+        except Exception as e:
+            return {"exito": False, "mensaje": f"Error al consultar la agenda: {str(e)}", "datos": []}
+
+    def listar_proximas_citas_doctor(self, id_doctor: int, estado: str) -> dict:
+        """
+        Lista las citas de un doctor de mañana en adelante, filtradas por estado
+        
+        Args:
+            id_doctor (int): ID del doctor
+            estado (str): Estado a filtrar (Agendada, Cancelada)
+        
+        Returns:
+            dict: {"exito": bool, "mensaje": str, "datos": list}
+        """
+        # Validar ID
+        if not isinstance(id_doctor, int) or id_doctor <= 0:
+            return {"exito": False, "mensaje": "ID de doctor inválido", "datos": []}
+        
+        # Validar estado
+        estado = estado.strip().capitalize()
+        if estado not in ESTADOS_CITA:
+            return {"exito": False, "mensaje": f"Estado '{estado}' no reconocido", "datos": []}
+
+        # Obtener fecha
+        hoy = date.today()
+
+        try:
+            # Buscar en Persistencia
+            doctor_encontrado = self.persistencia_personal.buscar_por_id(id_doctor)
+            if not doctor_encontrado:
+                return {"exito": False, "mensaje": f"No se encontró al doctor con ID {id_doctor}", "datos": []}
+            
+            # Condicion a buscar citas
+            citas_data = self.persistencia.buscar({
+                "id_doctor": id_doctor,
+                "estado": estado
+            })
+
+            # Conversion
+            instancias_proximas = []
+            for data in citas_data:
+                try:
+                    obj_cita = Cita.from_dict(data)
+                    # FILTRO: Solo si la fecha es estrictamente mayor a hoy
+                    if obj_cita.fecha > hoy:
+                        instancias_proximas.append(obj_cita)
+                except Exception:
+                    continue 
+
+            if not instancias_proximas:
+                return {
+                    "exito": False, 
+                    "mensaje": f"No hay citas {estado.lower()}s futuras para el Dr. {doctor_encontrado['nombre']}.", 
+                    "datos": []
+                }
+
+            # Ordenamiento por fecha y luego por hora
+            instancias_proximas.sort(key=lambda x: (x.fecha, x.hora))
+
+            return {
+                "exito": True,
+                "mensaje": f"Citas futuras del Dr. {doctor_encontrado['nombre']} recuperadas.",
+                "datos": instancias_proximas
+            }
+
+        except Exception as e:
+            return {"exito": False, "mensaje": f"Error al consultar citas futuras: {str(e)}", "datos": []}
+    
+    def listar_citas_pendientes_paciente(self, id_paciente: int) -> dict:  
+        """
+        Busca todas las citas con estado 'Agendada' de un paciente específico
+        
+        Args:
+            id_paciente (int): ID del paciente a consultar
+            
+        Returns:
+            dict: {"exito": bool, "mensaje": str, "datos": list[Cita]}
+        """
+        
+        # Validar ID
+        if not isinstance(id_paciente, int) or id_paciente <= 0:
+            return {"exito": False, "mensaje": "ID de paciente inválido", "datos": []}
+
+        try:
+            # Buscar en persistencia por ID de paciente y estado
+            citas_data = self.persistencia.buscar({
+                "id_paciente": id_paciente,
+                "estado": "Agendada"
+            })
+
+            if not citas_data:
+                return {
+                    "exito": False, 
+                    "mensaje": "El paciente no tiene citas pendientes de atención", 
+                    "datos": []
+                }
+
+            # Convertir diccionarios a instancias de Cita
+            lista_instancias = []
+            for item in citas_data:
+                try:
+                    lista_instancias.append(Cita.from_dict(item))
+                except Exception as e:
+                    print(f"Error al procesar cita ID {item.get('id_cita')}: {e}")
+                    continue
+
+            # 4. Ordenar por fecha y hora
+            lista_instancias.sort(key=lambda x: (x.fecha, x.hora))
+
+            return {
+                "exito": True,
+                "mensaje": f"Se encontraron {len(lista_instancias)} citas pendientes",
+                "datos": lista_instancias
+            }
+
+        except Exception as e:
+            return {"exito": False, "mensaje": f"Error al buscar citas: {str(e)}", "datos": []}
+    
     # ========== METODOS PRIVADOS ==========
     def _doctor_disponible(self, id_doctor: int, fecha: date, hora: time) -> bool:
         """

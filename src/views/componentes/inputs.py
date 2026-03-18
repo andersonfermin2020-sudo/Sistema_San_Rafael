@@ -1,6 +1,6 @@
 """Funciones de entrada de datos reutilizables en el sistema"""
 
-from datetime import date, datetime
+from datetime import date, datetime, time
 class Entradas:
     """
     Componente encargado de solicitar datos al usuario de forma segura
@@ -74,6 +74,20 @@ class Entradas:
                 return fecha_obj
             except ValueError:
                 print("  [!] Formato de fecha inválido o fecha inexistente. Use DD/MM/AAAA.")
+    
+    @staticmethod
+    def pedir_hora(mensaje: str, formato: str = "%H:%M") -> time:
+        """Pide una hora y verifica que el formato sea correcto (HH:MM)."""
+        while True:
+            valor = input(f"{mensaje} (Formato HH:MM): ").strip()
+            try:
+                # strptime crea un datetime completo, por eso usamos .time() al final
+                # para obtener solo el objeto de tiempo.
+                hora_obj = datetime.strptime(valor, formato).time()
+                
+                return hora_obj
+            except ValueError:
+                print("  [!] Formato de hora inválido o rango incorrecto (00:00 - 23:59).")
 
     @staticmethod
     def pedir_opcion(mensaje: str, opciones_validas: list) -> str:

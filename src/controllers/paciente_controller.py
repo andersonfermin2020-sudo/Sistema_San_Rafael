@@ -110,6 +110,46 @@ class PacienteController:
         except Exception as e:
             return {"exito": False, "mensaje": f"Error: {str(e)}", "datos": None}
 
+    def buscar_por_id(self, id_paciente: int) -> dict:
+            """
+            Busca un Paciente por su ID único.
+            
+            Args:
+                id_paciente (int): ID a buscar
+            
+            Returns:
+                dict: {"exito": bool, "mensaje": str, "datos": Paciente | None}
+            """
+
+            # Validar ID 
+            if not isinstance(id_paciente, int) or id_paciente <= 0:
+                return {"exito": False, "mensaje": "ID invalido. Debe ser un numero entero positivo", "datos": None}
+
+            # Buscar Paciente
+            try:   
+                pac = self.persistencia.buscar_por_id(id_paciente)
+                
+                if pac:
+                    obj_encontrado = Paciente.from_dict(pac)
+                    return {
+                        "exito": True, 
+                        "mensaje": "Paciente encontrado exitosamente", 
+                        "datos": obj_encontrado
+                    }
+                
+                return {
+                    "exito": False, 
+                    "mensaje": f"No se encontro ningun paciente con el ID {id_paciente}", 
+                    "datos": None
+                }
+                
+            except Exception as e:
+                return {
+                    "exito": False, 
+                    "mensaje": f"Error inesperado en el controlador: {str(e)}", 
+                    "datos": None
+                }
+
     def modificar_paciente(self, id_paciente: int, campo_modificar: dict) -> dict:
         """
         Modifica datos de un Paciente registrado

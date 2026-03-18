@@ -82,10 +82,6 @@ class ConsultaController:
                 
                 if "id_medicamento" not in receta or "cantidad" not in receta:
                     return {"exito": False, "mensaje": f"Receta {i} debe tener 'id_medicamento' y 'cantidad'", "datos": None}
-            
-            receta_resultado = self.inventario_controller.procesar_recetas(recetas)
-            if not receta_resultado["exito"]:
-                return {"exito": False, "mensaje": f"{receta_resultado['mensaje']}", "datos": None}
         
         # Crear Consulta
         try:
@@ -122,8 +118,21 @@ class ConsultaController:
                 tratamiento=tratamiento
             )
             
-            # Agregar recetas a la consulta si aplica
+            # Procesar recetas
             if recetas:
+                # Agregar id_consulta a cada receta para el registro de movimientos
+                recetas_con_consulta = [
+                    {**receta, "id_consulta": id_consulta} 
+                    for receta in recetas
+                ]
+                
+                # descuenta stock, registra movimientos
+                receta_resultado = self.inventario_controller.procesar_recetas(recetas_con_consulta)
+                
+                if not receta_resultado["exito"]:
+                    return {"exito": False, "mensaje": f"Error en recetas: {receta_resultado['mensaje']}", "datos": None}
+                
+                # Agregar recetas al objeto consulta
                 for receta in recetas:
                     consulta.agregar_receta(
                         receta["id_medicamento"],
